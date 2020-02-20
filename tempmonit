@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+# Set some parameters - ALARMTEMP is in celcius, SAMPLETIME is in seconds
 ALARMTEMP=55.0
 SAMPLETIME=10
 
+# Verify required package(s)
+command -v figlet >/dev/null 2>&1 || { echo >&2 "I require figlet but it's not installed.  Aborting."; exit 1; }
+
+# Alarm function
 alarm() {
 figlet "ALERT! CPU Temperature!"
 while :; do for x in {800..1000}; do 
@@ -18,6 +23,7 @@ while :; do for x in {800..1000}; do
 done
 }
 
+# CPU Temperature function
 cputemp() {
 while :; do
 tput clear
@@ -32,6 +38,7 @@ sleep ${SAMPLETIME}
 done
 }
 
+# Main
 tput civis
 cputemp
 exit 0
