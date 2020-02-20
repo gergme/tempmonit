@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+ALARMTEMP=55.0
+SAMPLETIME=10
+
+alarm() {
+figlet "ALERT! CPU Temperature!"
+while :; do for x in {800..1000}; do 
+	beep -p ${x} 1; 
+	done;
+	CPUTEMP=`sysctl -a | grep dev.cpu.0.temperature | cut -d " " -f2 | cut -d "C" -f1`
+	if ! (( $(bc <<<"$CPUTEMP > ${ALARMTEMP}") )); then
+                cputemp;
+        fi;
+	tput sc
+        printf "${CPUTEMP} :: ${ALARMTEMP}"
+        tput rc
+done
+}
+
+cputemp() {
+while :; do
+tput clear
+CPUTEMP=`sysctl -a | grep dev.cpu.0.temperature | cut -d " " -f2 | cut -d "C" -f1`
+if (( $(bc <<<"$CPUTEMP > ${ALARMTEMP}") )); then
+	alarm
+fi
+
+figlet "${CPUTEMP} != ${ALARMTEMP}"
+printf "Sample Time:  ${SAMPLETIME}"
+sleep ${SAMPLETIME}
+done
+}
+
+tput civis
+cputemp
+exit 0
