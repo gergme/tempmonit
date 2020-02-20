@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
-# Set some parameters - ALARMTEMP is in celcius, SAMPLETIME is in seconds
+###
+### NOTICE !!! You MUST have the appropriate modules loaded in your kernel for CPU sensors and speaker
+###
+
+# Set some parameters - ALARMTEMP is in celcius, MAXWAIT is in seconds
 ALARMTEMP=55.0
-SAMPLETIME=10
+MAXWAIT=5
 
 # Verify required package(s)
 command -v figlet >/dev/null 2>&1 || { echo >&2 "I require figlet but it's not installed.  Aborting."; exit 1; }
+command -v beep >/dev/null 2>&1 || { echo >&2 "I require beep but it's not installed.  Aborting."; exit 1; }
 
 # Alarm function
 alarm() {
@@ -33,8 +38,7 @@ if (( $(bc <<<"$CPUTEMP > ${ALARMTEMP}") )); then
 fi
 
 figlet "${CPUTEMP} != ${ALARMTEMP}"
-printf "Sample Time:  ${SAMPLETIME}"
-sleep ${SAMPLETIME}
+sleep $((RANDOM % MAXWAIT))
 done
 }
 
